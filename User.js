@@ -9,18 +9,26 @@ const addressSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
     name: String,
-    age: Number,
-    email: String,
-    // email: {type: String},
-    createdAt: {
-        type: Date,
-        default: Date.now
+    age: {
+        type: Number,
+        min: 0,
+        max: 150,
     },
-    updatedAt: {
-        type: Date,
-        default: Date.now
+    email: {
+        type: String,
+        lowercase: true,
+        validate: {
+                validator: function(v) { // v is the value of the email
+                    return v.endsWith('yahoo.com') || v.endsWith('gmail.com');
+                },
+                message: 'Email must end with yahoo.com or gmail.com',
+            },
+        required: [true, 'Email is required'],
+        },
+    bestFriend:{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'User'
     },
-    bestFriend: mongoose.SchemaTypes.ObjectId ,
     hobbies: [String],
     address: addressSchema,
     // address: {
@@ -29,7 +37,15 @@ const userSchema = new mongoose.Schema({
     //     state: String,
     //     zip: Number
     // }
-});
+    // createdAt: {
+    //     type: Date,
+    //     default: Date.now
+    // },
+    // updatedAt: {
+    //     type: Date,
+    //     default: Date.now
+    // },
+}, {timestamps: true});
 
 const User = mongoose.model('User', userSchema);
 
